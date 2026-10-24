@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ファイルダウンロード</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; text-align: center; }
+    .btn { display: inline-block; padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>ファイル受信</h1>
+  <p>以下のボタンを押すとファイルをダウンロードできます。</p>
+
+  <a id="downloadBtn" class="btn" href="#">ダウンロード開始</a>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileId = urlParams.get('id');
+
+    if (fileId) {
+      document.getElementById('downloadBtn').href = `/api/download/${fileId}`;
+    } else {
+      alert('無効なURLです。');
+    }
+  </script>
+</body>
+</html>

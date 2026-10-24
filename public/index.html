@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>簡易ギガファイル便</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+    .drop-zone { border: 2px dashed #007bff; border-radius: 8px; padding: 40px; text-align: center; cursor: pointer; background: #f8f9fa; }
+    .drop-zone:hover { background: #e9ecef; }
+    #result { margin-top: 20px; word-break: break-all; padding: 15px; background: #e7f5ff; border-radius: 4px; display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>大容量ファイル転送</h1>
+  
+  <div class="drop-zone" id="dropZone">
+    <p>ここにファイルをドラッグ＆ドロップ<br>またはクリックしてファイルを選択</p>
+    <input type="file" id="fileInput" style="display: none;">
+  </div>
+
+  <div id="result">
+    <h3>アップロード完了！</h3>
+    <p>ダウンロード用URL:</p>
+    <a id="downloadLink" href="#" target="_blank"></a>
+  </div>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const result = document.getElementById('result');
+    const downloadLink = document.getElementById('downloadLink');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        uploadFile(e.target.files[0]);
+      }
+    });
+
+    async function uploadFile(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          downloadLink.href = data.downloadUrl;
+          downloadLink.innerText = data.downloadUrl;
+          result.style.display = 'block';
+        } else {
+          alert('アップロード失敗');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('エラーが発生しました');
+      }
+    }
+  </script>
+</body>
+</html>
