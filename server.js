@@ -34,20 +34,23 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // 1. ファイルアップロードAPI
+// 1. ファイルアップロードAPI
 app.post('/api/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'ファイルを選択してください。' });
   }
 
-  // 本来はデータベース(SQLiteやMongoDB)に保存するのが理想的ですが、
-  // 簡単のためファイル名をそのままIDとして扱います
   const fileId = req.file.filename;
   const originalName = req.file.originalname;
+
+  // アクセスしてきたホスト名とプロトコル（http / https）を自動取得する
+  const protocol = req.protocol;
+  const host = req.get('host');
 
   res.json({
     success: true,
     fileId: fileId,
-    downloadUrl: `http://localhost:${PORT}/download.html?id=${fileId}&name=${encodeURIComponent(originalName)}`
+    downloadUrl: `${protocol}://${host}/download.html?id=${fileId}&name=${encodeURIComponent(originalName)}`
   });
 });
 
