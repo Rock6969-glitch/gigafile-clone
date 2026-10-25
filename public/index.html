@@ -8,6 +8,7 @@
     body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; line-height: 1.6; }
     .drop-zone { border: 2px dashed #007bff; border-radius: 8px; padding: 40px; text-align: center; cursor: pointer; background: #f8f9fa; }
     .drop-zone:hover { background: #e9ecef; }
+    .options { margin: 20px 0; }
     #result { margin-top: 20px; word-break: break-all; padding: 15px; background: #e7f5ff; border-radius: 4px; display: none; }
   </style>
 </head>
@@ -20,6 +21,17 @@
     <input type="file" id="fileInput" style="display: none;">
   </div>
 
+  <!-- 🌟 ここに保存期間を選ぶセレクトボックスを追加しました -->
+  <div class="options">
+    <label for="expireSelect"><b>保存期間：</b></label>
+    <select id="expireSelect" style="padding: 6px; font-size: 14px; border-radius: 4px;">
+      <option value="1">1日</option>
+      <option value="3" selected>3日</option>
+      <option value="7">7日</option>
+      <option value="0">期限なし</option>
+    </select>
+  </div>
+
   <div id="result">
     <h3>アップロード完了！</h3>
     <p>ダウンロード用URL:</p>
@@ -29,6 +41,7 @@
   <script>
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
+    const expireSelect = document.getElementById('expireSelect'); // 追加
     const result = document.getElementById('result');
     const downloadLink = document.getElementById('downloadLink');
 
@@ -43,6 +56,7 @@
     async function uploadFile(file) {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('expire', expireSelect.value); // 🌟 選ばれた期限（日数の数値や0）を一緒に送信する
 
       try {
         const response = await fetch('/api/upload', {
